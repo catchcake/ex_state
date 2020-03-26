@@ -3,6 +3,10 @@
 > TODO: Add description**
 
 
+[https://xstate.js.org/docs/](https://xstate.js.org/docs/)
+[https://www.w3.org/TR/scxml/](https://www.w3.org/TR/scxml/)
+
+
 ## Installation
 
 ```elixir
