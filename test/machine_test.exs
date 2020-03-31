@@ -5,7 +5,7 @@ defmodule MachineTest do
 
   alias ExState.Machine
 
-  @definition
+  @definition """
   %{
     id: "fetch",
     initial: :idle,
@@ -72,8 +72,47 @@ defmodule MachineTest do
       }
     }
   }
+  """
 
-  test "my test description" do
-    assert false
+  test "should create move machine to initial state" do
+    definition = %{
+      id: "test",
+      initial: :init,
+      states: %{
+        init: %{
+          type: :final
+        }
+      }
+    }
+
+    %Machine{state: state} = Machine.create(definition)
+
+    assert state.value == :init
+    assert state.event == %{type: :ex_state_init}
+  end
+
+  test "should move to next state" do
+    definition = %{
+      id: "test",
+      initial: :init,
+      states: %{
+        init: %{
+          on: %{
+            NEXT: :another
+          }
+        },
+        another: %{
+          type: :final
+        }
+      }
+    }
+
+    %Machine{state: state} =
+      definition
+      |> Machine.create()
+      |> Machine.transition(:NEXT)
+
+    assert state.value == :another
+    assert state.event == %{type: :NEXT}
   end
 end

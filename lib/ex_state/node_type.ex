@@ -26,7 +26,7 @@ defmodule ExState.NodeType do
     Compound.create(node)
   end
 
-  def create(%{type: :parallel, states: states} = node) do
+  def create(%{type: :parallel, states: states} = node) when map_size(states) > 1 do
     Parallel.create(node)
   end
 
