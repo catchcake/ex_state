@@ -4,9 +4,10 @@ defmodule ExState.State do
   """
 
   defstruct value: nil,
-            event: nil
+            event: nil,
+            context: nil
 
-  def create(state, event) do
-    %__MODULE__{value: state, event: event}
+  def create(state, context, event) do
+    %__MODULE__{value: state, event: event, context: context}
   end
 end
