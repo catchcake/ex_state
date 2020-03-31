@@ -7,7 +7,7 @@ defmodule ExState.Machine do
 
   defstruct id: nil,
             initial: nil,
-            state: %State{},
+            state: nil,
             states: %{}
 
   def create(machine) when is_map(machine) do
@@ -15,13 +15,23 @@ defmodule ExState.Machine do
     |> put_id(machine)
     |> put_initial(machine)
     |> create_states(machine)
-    |> init()
+    |> transition(:ex_state_init)
   end
 
-  # def transition(%__MODULE__{} = machine, event) do
-  # end
+  def transition(%__MODULE__{initial: init} = machine, :ex_state_init) do
+    %__MODULE__{machine | state: State.create(init, create_event(:ex_state_init))}
+  end
+
+  def transition(%__MODULE__{} = machine, event) do
+    %{machine: machine, event: create_event(event)}
+    |> current_state()
+    |> find_next_state_key()
+    |> next_state()
+    |> move()
+  end
 
   # Private
+
   defp put_id(%__MODULE__{} = machine, %{id: id}) when is_binary(id) do
     %__MODULE__{machine | id: id}
   end
@@ -35,7 +45,39 @@ defmodule ExState.Machine do
     %__MODULE__{machine | states: States.create(states)}
   end
 
-  defp init(%__MODULE__{initial: init} = machine) do
-    %__MODULE__{machine | state: State.create(init)}
+  defp move(transition) do
+    %__MODULE__{
+      transition.machine
+      | state: State.create(transition.next_state_key, transition.event)
+    }
+  end
+
+  defp create_event(%{type: _type} = event), do: event
+
+  defp create_event(event) when is_binary(event) or is_atom(event) do
+    %{type: event}
+  end
+
+  defp next_state(transition) do
+    Map.put(
+      transition,
+      :next_state,
+      Map.fetch!(
+        transition.machine.states,
+        transition.next_state_key
+      )
+    )
+  end
+
+  defp current_state(%{machine: %__MODULE__{state: %State{value: value}}} = transition) do
+    Map.put(transition, :current_state, transition.machine.states |> Map.fetch!(value))
+  end
+
+  defp find_next_state_key(%{event: %{type: event}} = transition) do
+    Map.put(
+      transition,
+      :next_state_key,
+      Map.fetch!(transition.current_state.on, event)
+    )
   end
 end

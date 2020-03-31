@@ -3,9 +3,10 @@ defmodule ExState.State do
   A FSM state
   """
 
-  defstruct value: nil
+  defstruct value: nil,
+            event: nil
 
-  def create(state) do
-    %__MODULE__{value: state}
+  def create(state, event) do
+    %__MODULE__{value: state, event: event}
   end
 end
