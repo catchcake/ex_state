@@ -7,6 +7,7 @@ defmodule ExState.Machine do
 
   defstruct id: nil,
             initial: nil,
+            context: nil,
             state: nil,
             states: %{}
 
@@ -14,12 +15,13 @@ defmodule ExState.Machine do
     %__MODULE__{}
     |> put_id(machine)
     |> put_initial(machine)
+    |> put_context(machine)
     |> create_states(machine)
     |> transition(:ex_state_init)
   end
 
-  def transition(%__MODULE__{initial: init} = machine, :ex_state_init) do
-    %__MODULE__{machine | state: State.create(init, create_event(:ex_state_init))}
+  def transition(%__MODULE__{initial: init, context: context} = machine, :ex_state_init) do
+    %__MODULE__{machine | state: State.create(init, context, create_event(:ex_state_init))}
   end
 
   def transition(%__MODULE__{} = machine, event) do
@@ -41,6 +43,10 @@ defmodule ExState.Machine do
     %__MODULE__{machine | initial: init}
   end
 
+  defp put_context(%__MODULE__{} = machine, definition) when is_map(definition) do
+    %__MODULE__{machine | context: Map.get(definition, :context, nil)}
+  end
+
   defp create_states(%__MODULE__{} = machine, %{states: states}) when is_map(states) do
     %__MODULE__{machine | states: States.create(states)}
   end
@@ -48,7 +54,12 @@ defmodule ExState.Machine do
   defp move(transition) do
     %__MODULE__{
       transition.machine
-      | state: State.create(transition.next_state_key, transition.event)
+      | state:
+          State.create(
+            transition.next_state_key,
+            transition.machine.context,
+            transition.event
+          )
     }
   end
 
