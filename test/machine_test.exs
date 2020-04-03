@@ -115,4 +115,47 @@ defmodule MachineTest do
     assert state.value == :another
     assert state.event == %{type: :NEXT}
   end
+
+  test "should run defined action" do
+    context = %{test: 12_345}
+
+    definition = %{
+      id: "test",
+      initial: :init,
+      context: context,
+      states: %{
+        init: %{
+          on: %{
+            NEXT: %{
+              target: :another,
+              actions: [:test]
+            }
+          }
+        },
+        another: %{
+          type: :final
+        }
+      }
+    }
+
+    opts = %{
+      actions: %{
+        test: &test_action/2
+      }
+    }
+
+    %Machine{state: state} =
+      definition
+      |> Machine.create(opts)
+      |> Machine.transition(:NEXT)
+
+    assert state.value == :another
+    assert state.event == %{type: :NEXT}
+
+    assert_receive {:action_called, ^context, %{type: :NEXT}}
+  end
+
+  defp test_action(context, event) do
+    send(self(), {:action_called, context, event})
+  end
 end
