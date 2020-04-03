@@ -2,6 +2,8 @@ defmodule ExState.NodeType.Compound do
   @moduledoc """
   A compound state node
   """
+  alias ExState.Transitions
+
   defstruct initial: nil,
             on: %{},
             states: %{}
@@ -9,7 +11,7 @@ defmodule ExState.NodeType.Compound do
   def create(%{initial: init, states: states} = node) do
     %__MODULE__{
       initial: init,
-      on: Map.get(node, :on, %{}),
+      on: node |> Map.get(:on, %{}) |> Transitions.create(),
       states: ExState.States.create(states)
     }
   end
