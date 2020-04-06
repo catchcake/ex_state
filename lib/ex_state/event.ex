@@ -6,8 +6,8 @@ defmodule ExState.Event do
   defstruct type: nil,
             data: nil
 
-  def create(%{type: type, data: data} = event) do
-    %__MODULE__{type: event, data: data}
+  def create(%{type: type, data: data}) do
+    %__MODULE__{type: type, data: data}
   end
 
   def create(event) when is_binary(event) or is_atom(event) do

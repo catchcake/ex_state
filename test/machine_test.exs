@@ -3,7 +3,7 @@ defmodule MachineTest do
   use ExUnit.Case
   doctest ExState.Machine
 
-  alias ExState.Machine
+  alias ExState.{Event, Machine}
 
   @definition """
   %{
@@ -88,7 +88,7 @@ defmodule MachineTest do
     %Machine{state: state} = Machine.create(definition)
 
     assert state.value == :init
-    assert state.event == %{type: :ex_state_init}
+    assert state.event == Event.create(:ex_state_init)
   end
 
   test "should move to next state" do
@@ -113,7 +113,7 @@ defmodule MachineTest do
       |> Machine.transition(:NEXT)
 
     assert state.value == :another
-    assert state.event == %{type: :NEXT}
+    assert state.event == Event.create(:NEXT)
   end
 
   test "should run defined action" do
@@ -150,7 +150,7 @@ defmodule MachineTest do
       |> Machine.transition(:NEXT)
 
     assert state.value == :another
-    assert state.event == %{type: :NEXT}
+    assert state.event == Event.create(:NEXT)
 
     assert_receive {:action_called, ^context, %{type: :NEXT}}
   end
