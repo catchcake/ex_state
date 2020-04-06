@@ -3,7 +3,7 @@ defmodule ExState.Machine do
   A finite state machine definition.
   """
 
-  alias ExState.{State, States, Transition}
+  alias ExState.{Event, State, States, Transition}
 
   defstruct id: nil,
             initial: nil,
@@ -21,11 +21,11 @@ defmodule ExState.Machine do
   end
 
   def transition(%__MODULE__{initial: init, context: context} = machine, :ex_state_init) do
-    %__MODULE__{machine | state: State.create(init, context, create_event(:ex_state_init))}
+    %__MODULE__{machine | state: State.create(init, context, Event.create(:ex_state_init))}
   end
 
   def transition(%__MODULE__{} = machine, event) do
-    %{machine: machine, event: create_event(event)}
+    %{machine: machine, event: Event.create(event)}
     |> current_state()
     |> find_transition()
     |> next_state()
@@ -61,12 +61,6 @@ defmodule ExState.Machine do
             transition.event
           )
     }
-  end
-
-  defp create_event(%{type: _type} = event), do: event
-
-  defp create_event(event) when is_binary(event) or is_atom(event) do
-    %{type: event}
   end
 
   defp next_state(transition) do
