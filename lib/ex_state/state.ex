@@ -17,11 +17,17 @@ defmodule ExState.State do
 
   def context(%__MODULE__{context: context}), do: context
 
-  def move(%Request{transition: transition, event: event, context: context}) do
+  def move(%Request{transition: transition, event: event, context: context} = request) do
+    run_side_effects(request)
+
     %__MODULE__{
       value: Transition.target(transition),
       event: event,
       context: context
     }
+  end
+
+  defp run_side_effects(%Request{context: context, actions: actions, event: event}) do
+    Enum.map(actions, fn action -> action.(context, event) end)
   end
 end

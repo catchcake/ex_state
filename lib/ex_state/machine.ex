@@ -3,20 +3,22 @@ defmodule ExState.Machine do
   A finite state machine definition.
   """
 
-  alias ExState.{Event, State, Request, States, Transition}
+  alias ExState.{Event, State, Options, Request, States}
 
   defstruct id: nil,
             initial: nil,
             context: nil,
             state: nil,
-            states: %{}
+            states: %{},
+            options: nil
 
-  def create(machine, opts \\ %{}) when is_map(machine) do
+  def create(machine, opts \\ %{}) when is_map(machine) and is_map(opts) do
     %__MODULE__{}
     |> put_id(machine)
     |> put_initial(machine)
     |> put_context(machine)
     |> create_states(machine)
+    |> put_options(opts)
     |> transition(:ex_state_init)
   end
 
@@ -39,6 +41,10 @@ defmodule ExState.Machine do
 
   defp put_context(%__MODULE__{} = machine, definition) when is_map(definition) do
     %__MODULE__{machine | context: Map.get(definition, :context, nil)}
+  end
+
+  defp put_options(%__MODULE__{} = machine, opts) when is_map(opts) do
+    %__MODULE__{machine | options: Options.create(opts)}
   end
 
   defp create_states(%__MODULE__{} = machine, %{states: states}) when is_map(states) do
