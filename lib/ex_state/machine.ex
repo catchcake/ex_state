@@ -3,7 +3,7 @@ defmodule ExState.Machine do
   A finite state machine definition.
   """
 
-  alias ExState.{Event, State, States, Transition}
+  alias ExState.{Event, State, Request, States, Transition}
 
   defstruct id: nil,
             initial: nil,
@@ -20,15 +20,9 @@ defmodule ExState.Machine do
     |> transition(:ex_state_init)
   end
 
-  def transition(%__MODULE__{initial: init, context: context} = machine, :ex_state_init) do
-    %__MODULE__{machine | state: State.create(init, context, Event.create(:ex_state_init))}
-  end
-
   def transition(%__MODULE__{} = machine, event) do
-    %{machine: machine, event: Event.create(event)}
-    |> current_state()
-    |> find_transition()
-    |> next_state()
+    machine
+    |> Request.create(Event.create(event))
     |> move()
   end
 
@@ -51,38 +45,7 @@ defmodule ExState.Machine do
     %__MODULE__{machine | states: States.create(states)}
   end
 
-  defp move(transition) do
-    %__MODULE__{
-      transition.machine
-      | state:
-          State.create(
-            Transition.target(transition.transition),
-            transition.machine.context,
-            transition.event
-          )
-    }
-  end
-
-  defp next_state(transition) do
-    Map.put(
-      transition,
-      :next_state,
-      Map.fetch!(
-        transition.machine.states,
-        Transition.target(transition.transition)
-      )
-    )
-  end
-
-  defp current_state(%{machine: %__MODULE__{state: %State{value: value}}} = transition) do
-    Map.put(transition, :current_state, transition.machine.states |> Map.fetch!(value))
-  end
-
-  defp find_transition(%{event: %{type: event}} = transition) do
-    Map.put(
-      transition,
-      :transition,
-      Map.fetch!(transition.current_state.on, event)
-    )
+  defp move(%Request{machine: machine} = request) do
+    %__MODULE__{machine | state: State.move(request)}
   end
 end
