@@ -3,7 +3,7 @@ defmodule ExState.Request do
   A transition request.
   """
 
-  alias ExState.{Machine, Event, Transition, State}
+  alias ExState.{Machine, Event, Options, Transition, State}
 
   defstruct machine: nil,
             event: nil,
@@ -21,6 +21,7 @@ defmodule ExState.Request do
     |> put_current_state()
     |> put_transition()
     |> put_next_state()
+    |> put_actions()
   end
 
   defp put_context(
@@ -66,5 +67,14 @@ defmodule ExState.Request do
 
   defp put_machine(%__MODULE__{} = request, %Machine{} = machine) do
     %__MODULE__{request | machine: machine}
+  end
+
+  defp put_actions(
+         %__MODULE__{machine: %Machine{options: opts}, transition: transition} = request
+       ) do
+    %__MODULE__{
+      request
+      | actions: transition |> Transition.actions() |> Enum.map(&Options.action(opts, &1))
+    }
   end
 end

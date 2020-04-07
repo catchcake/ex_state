@@ -24,4 +24,5 @@ defmodule ExState.Transition do
   end
 
   def target(%__MODULE__{target: target}), do: target
+  def actions(%__MODULE__{actions: actions}), do: actions
 end
