@@ -17,17 +17,24 @@ defmodule ExState.State do
 
   def context(%__MODULE__{context: context}), do: context
 
-  def move(%Request{transition: transition, event: event, context: context} = request) do
-    run_side_effects(request)
-
+  def move(%Request{actions: actions, transition: transition, event: event, context: context}) do
     %__MODULE__{
       value: Transition.target(transition),
       event: event,
-      context: context
+      context: run_side_effects(actions, context, event)
     }
   end
 
-  defp run_side_effects(%Request{context: context, actions: actions, event: event}) do
-    Enum.map(actions, fn action -> action.(context, event) end)
+  defp run_side_effects([], context, _event) do
+    context
+  end
+
+  defp run_side_effects([{:assign, f} | rest], context, event) when is_function(f, 2) do
+    run_side_effects(rest, f.(context, event), event)
+  end
+
+  defp run_side_effects([f | rest], context, event) when is_function(f, 2) do
+    f.(context, event)
+    run_side_effects(rest, context, event)
   end
 end
