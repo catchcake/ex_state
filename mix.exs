@@ -19,7 +19,9 @@ defmodule ExState.MixProject do
       elixir: "~> 1.8",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      description: "A library for creating, interpreting, and executing finite state machines and statecharts.",
       deps: deps(),
+      package: package(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         coveralls: :test,
@@ -48,6 +50,19 @@ defmodule ExState.MixProject do
       {:credo, "~> 1.1", only: [:dev, :test]},
       {:excoveralls, "~> 0.11", only: :test},
       {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false}
+    ]
+  end
+  defp package do
+    [
+      maintainers: [
+        "Jindrich K. Smitka <smitka.j@gmail.com>",
+        "Ondrej Tucek <ondrej.tucek@gmail.com>",
+        "Daniel Bultas <comm3net@gmail.com>"
+      ],
+      licenses: ["BSD-4-Clause"],
+      links: %{
+        "GitHub" => "https://github.com/iodevs/ex_state"
+      }
     ]
   end
 end
