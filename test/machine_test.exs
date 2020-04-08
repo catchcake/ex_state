@@ -3,7 +3,7 @@ defmodule MachineTest do
   use ExUnit.Case
   doctest ExState.Machine
 
-  alias ExState.{Event, Machine}
+  alias ExState.{Event, Machine, Context}
 
   @definition """
   %{
@@ -153,6 +153,52 @@ defmodule MachineTest do
     assert state.event == Event.create(:NEXT)
 
     assert_receive {:action_called, ^context, %{type: :NEXT}}
+  end
+
+  test "should action update context" do
+    context = %{
+      foo: 0,
+      bar: 10,
+      fuz: 1_000
+    }
+
+    definition = %{
+      id: "test",
+      initial: :init,
+      context: context,
+      states: %{
+        init: %{
+          on: %{
+            NEXT: %{
+              target: :another,
+              actions: [:test]
+            }
+          }
+        },
+        another: %{
+          type: :final
+        }
+      }
+    }
+
+    opts = %{
+      actions: %{
+        test:
+          Context.assign(%{
+            foo: fn context, _ -> context.foo + 1 end,
+            bar: fn context, _ -> context.bar - 1 end
+          })
+      }
+    }
+
+    %Machine{state: state} =
+      definition
+      |> Machine.create(opts)
+      |> Machine.transition(:NEXT)
+
+    assert state.value == :another
+    assert state.event == Event.create(:NEXT)
+    assert state.context == %{foo: 1, bar: 9, fuz: 1_000}
   end
 
   defp test_action(context, event) do
