@@ -19,7 +19,8 @@ defmodule ExState.MixProject do
       elixir: "~> 1.8",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      description: "A library for creating, interpreting, and executing finite state machines and statecharts.",
+      description:
+        "A library for creating, interpreting, and executing finite state machines and statecharts.",
       deps: deps(),
       package: package(),
       test_coverage: [tool: ExCoveralls],
@@ -46,12 +47,13 @@ defmodule ExState.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:ex_doc, "~> 0.21", only: :dev},
+      {:ex_doc, "~> 0.21", only: :dev},
       {:credo, "~> 1.1", only: [:dev, :test]},
       {:excoveralls, "~> 0.11", only: :test},
       {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false}
     ]
   end
+
   defp package do
     [
       maintainers: [
