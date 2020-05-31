@@ -25,4 +25,5 @@ defmodule ExState.Transition do
 
   def target(%__MODULE__{target: target}), do: target
   def actions(%__MODULE__{actions: actions}), do: actions
+  def guard(%__MODULE__{guard: guard}), do: guard
 end
