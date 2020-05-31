@@ -17,6 +17,14 @@ defmodule ExState.State do
 
   def context(%__MODULE__{context: context}), do: context
 
+  def move(%Request{transition: nil, event: event, context: context, machine: machine}) do
+    %__MODULE__{
+      value: machine.state.value,
+      event: event,
+      context: context
+    }
+  end
+
   def move(%Request{actions: actions, transition: transition, event: event, context: context}) do
     %__MODULE__{
       value: Transition.target(transition),

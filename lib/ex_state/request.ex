@@ -35,6 +35,10 @@ defmodule ExState.Request do
     %__MODULE__{request | context: State.context(state)}
   end
 
+  defp put_next_state(%__MODULE__{transition: nil} = request) do
+    %__MODULE__{request | next_state: nil}
+  end
+
   defp put_next_state(%__MODULE__{machine: %Machine{states: states}} = request) do
     %__MODULE__{
       request
@@ -57,8 +61,44 @@ defmodule ExState.Request do
     %__MODULE__{request | transition: Transition.create(init)}
   end
 
-  defp put_transition(%__MODULE__{event: %{type: event}, current_state: current_state} = request) do
-    %__MODULE__{request | transition: Map.fetch!(current_state.on, event)}
+  defp put_transition(%__MODULE__{event: event, current_state: current_state} = request) do
+    %__MODULE__{
+      request
+      | transition:
+          current_state.on
+          |> Map.fetch!(event.type)
+          |> normalize_transitions()
+          |> find_first_allowed_transition(request)
+    }
+  end
+
+  defp normalize_transitions(%Transition{} = transition) do
+    [transition]
+  end
+
+  defp normalize_transitions(transitions) when is_list(transitions) do
+    transitions
+  end
+
+  defp find_first_allowed_transition([%Transition{guard: nil} = transition | _], _) do
+    transition
+  end
+
+  defp find_first_allowed_transition(
+         [%Transition{guard: guard} = transition | rest],
+         request
+       ) do
+    guard_function = Options.guard(request.machine.options, guard)
+
+    if guard_function.(request.context, request.event) do
+      transition
+    else
+      find_first_allowed_transition(rest, request)
+    end
+  end
+
+  defp find_first_allowed_transition([], _) do
+    nil
   end
 
   defp put_event(%__MODULE__{} = request, %Event{} = event) do
@@ -67,6 +107,10 @@ defmodule ExState.Request do
 
   defp put_machine(%__MODULE__{} = request, %Machine{} = machine) do
     %__MODULE__{request | machine: machine}
+  end
+
+  defp put_actions(%__MODULE__{transition: nil} = request) do
+    %__MODULE__{request | actions: nil}
   end
 
   defp put_actions(
