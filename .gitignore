@@ -21,9 +21,14 @@ erl_crash.dump
 
 # Ignore package tarball (built via "mix hex.build").
 ex_state-*.tar
+#
+# Ignore dialyzer tables
+/priv/plts/*.plt
+/priv/plts/*.plt.hash
 
 .envs
 .vimrc
 
 tags
 .projections.json
+.elixir_ls/

@@ -5,6 +5,7 @@ defmodule ExState.MixProject do
     [
       app: :ex_state,
       dialyzer: [
+        plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
         plt_add_apps: [:mix],
         plt_add_deps: :transitive,
         ignore_warnings: "dialyzer.ignore-warnings",
@@ -50,7 +51,7 @@ defmodule ExState.MixProject do
       {:ex_doc, "~> 0.21", only: :dev},
       {:credo, "~> 1.1", only: [:dev, :test]},
       {:excoveralls, "~> 0.11", only: :test},
-      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.0.0", only: [:dev, :test], runtime: false}
     ]
   end
 
