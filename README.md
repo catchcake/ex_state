@@ -12,7 +12,7 @@
 ```elixir
 def deps do
   [
-    {:ex_state, "~> 1.0.2"}
+    {:ex_state, "~> 1.1.0"}
   ]
 end
 ```
