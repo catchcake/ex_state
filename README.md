@@ -1,4 +1,4 @@
-# ExState
+# ExState ![](https://github.com/catchcake/ex_state/workflows/Continuous%20Integration/badge.svg)
 
 Elixir [finite state machines](https://en.wikipedia.org/wiki/Finite-state_machine) and [statecharts](http://www.inf.ed.ac.uk/teaching/courses/seoc/2005_2006/resources/statecharts.pdf) library.
 
