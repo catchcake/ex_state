@@ -80,12 +80,12 @@ defmodule ExState.Request do
     transitions
   end
 
-  defp find_first_allowed_transition([%Transition{guard: nil} = transition | _], _) do
+  defp find_first_allowed_transition([%Transition{cond: nil} = transition | _], _) do
     transition
   end
 
   defp find_first_allowed_transition(
-         [%Transition{guard: guard} = transition | rest],
+         [%Transition{cond: guard} = transition | rest],
          request
        ) do
     guard_function = Options.guard(request.machine.options, guard)

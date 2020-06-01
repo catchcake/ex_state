@@ -13,7 +13,7 @@ defmodule GuardTest do
           on: %{
             NEXT: %{
               target: :another,
-              guard: :next_allowed
+              cond: :next_allowed
             }
           }
         },
@@ -53,12 +53,12 @@ defmodule GuardTest do
             NEXT: [
               %{
                 target: :another,
-                guard: :first,
+                cond: :first,
                 actions: [:first]
               },
               %{
                 target: :another,
-                guard: :second,
+                cond: :second,
                 actions: [:second]
               },
               %{
@@ -105,7 +105,7 @@ defmodule GuardTest do
           on: %{
             NEXT: %{
               target: :another,
-              guard: :next_disallowed
+              cond: :next_disallowed
             }
           }
         },
