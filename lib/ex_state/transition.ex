@@ -4,7 +4,7 @@ defmodule ExState.Transition do
   """
 
   defstruct target: nil,
-            guard: nil,
+            cond: nil,
             actions: []
 
   def create(value) when is_atom(value) or is_binary(value) do
@@ -18,12 +18,12 @@ defmodule ExState.Transition do
   def create(value) when is_map(value) do
     %__MODULE__{
       target: value.target,
-      guard: Map.get(value, :guard, nil),
+      cond: Map.get(value, :cond, nil),
       actions: Map.get(value, :actions, [])
     }
   end
 
   def target(%__MODULE__{target: target}), do: target
   def actions(%__MODULE__{actions: actions}), do: actions
-  def guard(%__MODULE__{guard: guard}), do: guard
+  def guard(%__MODULE__{cond: guard}), do: guard
 end
