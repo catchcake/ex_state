@@ -1,6 +1,8 @@
 defmodule ExState.MixProject do
   use Mix.Project
 
+  @version "2.0.0"
+
   def project do
     [
       app: :ex_state,
@@ -16,13 +18,15 @@ defmodule ExState.MixProject do
           :no_opaque
         ]
       ],
-      version: "2.0.0",
+      version: @version,
       elixir: "~> 1.8",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       description:
         "A library for creating, interpreting, and executing finite state machines and statecharts.",
       deps: deps(),
+      docs: docs(),
+      source_url: "https://github.com/catchcake/ex_state",
       package: package(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
@@ -66,6 +70,37 @@ defmodule ExState.MixProject do
       links: %{
         "GitHub" => "https://github.com/iodevs/ex_state"
       }
+    ]
+  end
+
+  defp docs() do
+    [
+      source_ref: "v#{@version}",
+      main: "getting_started",
+      extra_section: "GUIDES",
+      assets: "guides/assets",
+      extras: extras(),
+      groups_for_extras: groups_for_extras()
+    ]
+  end
+
+  defp extras() do
+    [
+      "guides/getting_started.md",
+      "guides/events.md",
+      "guides/machines.md",
+      "guides/states.md",
+      "guides/statenodes.md",
+      "guides/transitions.md",
+      "guides/hierarchical.md",
+      "guides/history.md",
+      "guides/parallel.md"
+    ]
+  end
+
+  defp groups_for_extras() do
+    [
+      Guides: ~r/guides\/[^\/]+\.md/
     ]
   end
 end
