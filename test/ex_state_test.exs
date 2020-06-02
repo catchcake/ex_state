@@ -1,4 +1,4 @@
 defmodule ExStateTest do
   use ExUnit.Case
-  # doctest ExState
+  doctest ExState
 end
