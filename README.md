@@ -11,7 +11,7 @@ Elixir [finite state machines](https://en.wikipedia.org/wiki/Finite-state_machin
 ```elixir
 def deps do
   [
-    {:ex_state, "~> 2.0.0"}
+    {:ex_state, "~> 2.0.1"}
   ]
 end
 ```

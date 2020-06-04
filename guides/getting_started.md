@@ -5,7 +5,7 @@ Suppose we want to model a simple semaphore as state machine. First, install ExS
 ```elixir
 def deps do
   [
-    {:ex_state, "~> 2.0.0"}
+    {:ex_state, "~> 2.0.1"}
   ]
 end
 ```
