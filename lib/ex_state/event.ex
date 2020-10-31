@@ -6,14 +6,11 @@ defmodule ExState.Event do
   defstruct type: nil,
             data: nil
 
-  def create(%{type: type, data: data}) do
-    %__MODULE__{type: type, data: data}
+  def create(request, %{type: type, data: data}) when is_map(request) do
+    Map.put(request, :event, %__MODULE__{type: type, data: data})
   end
 
-  def create(event) when is_binary(event) or is_atom(event) do
-    %__MODULE__{
-      type: event,
-      data: nil
-    }
+  def create(request, event) when is_map(request) and (is_binary(event) or is_atom(event)) do
+    Map.put(request, :event, %__MODULE__{type: event, data: nil})
   end
 end

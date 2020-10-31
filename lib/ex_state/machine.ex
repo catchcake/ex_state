@@ -22,10 +22,28 @@ defmodule ExState.Machine do
     |> transition(:ex_state_init)
   end
 
+  # def transition(%__MODULE__{} = machine, event) do
+  #   machine
+  #   |> Request.create(Event.create(event))
+  #   |> move()
+  # end
+
   def transition(%__MODULE__{} = machine, event) do
-    machine
-    |> Request.create(Event.create(event))
-    |> move()
+    request = %{
+      machine: machine
+    }
+
+    request
+    |> Event.create(event)
+    |> State.move()
+  end
+
+  def context(%__MODULE__{state: state}) do
+    State.context(state)
+  end
+
+  def state(%__MODULE__{state: state}) do
+    State.value(state)
   end
 
   # Private

@@ -60,4 +60,7 @@ defmodule ExState do
   See `ExState.Machine.transition/2`
   """
   defdelegate transition(machine, event), to: ExState.Machine
+
+  defdelegate state(machine), to: ExState.Machine
+  defdelegate context(machine), to: ExState.Machine
 end
